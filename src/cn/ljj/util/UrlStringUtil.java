@@ -31,13 +31,13 @@ public class UrlStringUtil {
 	}
 
 	public static Map<String, String> parseQueryString(String queryString) {
-		try {
-			queryString = URLDecoder.decode(queryString, "UTF-8");
-		} catch (UnsupportedEncodingException e) {
-			e.printStackTrace();
-		}
 		HashMap<String, String> parameters = new HashMap<>();
 		if (queryString != null) {
+			try {
+				queryString = URLDecoder.decode(queryString, "UTF-8");
+			} catch (UnsupportedEncodingException e) {
+				e.printStackTrace();
+			}
 			if (queryString.startsWith("?")) {
 				queryString = queryString.substring(1);
 			}

@@ -11,15 +11,17 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.Part;
 
+import cn.ljj.util.FileUtils;
 import cn.ljj.util.Logger;
 import cn.ljj.util.ServletUtil;
+import cn.ljj.util.UrlStringUtil;
 
 /**
  * Servlet implementation class UploadServer
  */
-@MultipartConfig(location = "/Users/liangjiajian/Servers")
+@MultipartConfig(location = ".")
 @WebServlet(name = "UploadServer")
-public class UploadServer extends HttpServlet implements StaticDefines {
+public class UploadServer extends LocalFilesBaseServlet implements StaticDefines {
 	private static final long serialVersionUID = 1L;
 	private static final String TAG = UploadServer.class.getSimpleName();
 
@@ -36,8 +38,11 @@ public class UploadServer extends HttpServlet implements StaticDefines {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		ServletUtil.dumpRequest(request);
-		response.sendError(HttpServletResponse.SC_NOT_FOUND);
+		if (!checkAuthorize(request, response)) {
+			Logger.e(TAG, "doGet Authorize failed!");
+			return;
+		}
+		super.doGet(request, response);
 	}
 
 	/**
@@ -47,27 +52,53 @@ public class UploadServer extends HttpServlet implements StaticDefines {
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		ServletUtil.dumpRequest(request);
-		Part filePart = request.getPart("file");
-		String fileName = ServletUtil.getPartFileName(filePart);
-		Logger.d(TAG, "doPost filePart : fileName=" + fileName);
-		if(fileName == null){
+		if (!checkAuthorize(request, response)) {
+			Logger.e(TAG, "doPost Authorize failed!");
 			return;
 		}
-		String path = request.getParameter("path");
+		Part filePart = request.getPart(KEY_PARAM_FILE_PART);
+		String fileName = ServletUtil.getPartFileName(filePart);
+		Logger.d(TAG, "doPost filePart : fileName=" + fileName);
+		if (fileName == null) {
+			return;
+		}
+		String path = request.getParameter(KEY_PARAM_PATH);
+		if (path == null) {
+			path = ".";
+		}
 		File folder = new File(UPLOAD_SAVE_FILE_ROOT_PATH, path);
-		if(!folder.exists()){
+		if (!folder.exists()) {
 			folder.mkdirs();
 		}
-		File file = new File(folder, fileName);
-		boolean override = "1".equals(request.getParameter("override"));
-		if(!override && file.exists()){
-			if(fileName.contains(".")){
-				
-			}else{
-				fileName = fileName + "";
-			}
-		}else{
-			filePart.write(fileName);
+		boolean override = "1".equals(request.getParameter(KEY_PARAM_OVERRIDE));
+		String finalFileName = null;
+		if (!override) {
+			finalFileName = FileUtils.getConflictResovedPath(folder.getPath(), fileName);
+		} else {
+			finalFileName = folder.getPath() + File.separator + fileName;
 		}
+		Logger.i(TAG, "finalFileName=" + finalFileName);
+		filePart.write(finalFileName);
+		response.getWriter().write("{path=\"" + finalFileName.replace(UPLOAD_SAVE_FILE_ROOT_PATH, "") + "\"}");
+	}
+
+	@Override
+	protected String getBaseLocalPath() {
+		return UPLOAD_SAVE_FILE_ROOT_PATH;
+	}
+
+	@Override
+	protected String getBaseUrlPath() {
+		return URL_PATH_NORMAL;
+	}
+
+	private boolean checkAuthorize(HttpServletRequest request, HttpServletResponse response) throws IOException {
+		String token = UrlStringUtil.parseQueryString(request.getQueryString()).get(KEY_PARAM_TOKEN);
+		Logger.i(TAG, "checkAuthorize token=" + token);
+		if (!AUTHORIZE_TOKEN.equals(token)) {
+			response.sendError(HttpServletResponse.SC_FORBIDDEN);
+			return false;
+		}
+		return true;
 	}
 }

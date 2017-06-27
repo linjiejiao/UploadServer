@@ -9,6 +9,16 @@
   </servlet>
   <servlet-mapping>
     <servlet-name>UploadServer</servlet-name>
-    <url-pattern>/*</url-pattern>
+    <url-pattern>/normal/*</url-pattern>
+  </servlet-mapping>
+  <servlet>
+    <description>ProxyUplodServer</description>
+    <display-name>ProxyUplodServer</display-name>
+    <servlet-name>ProxyUplodServer</servlet-name>
+    <servlet-class>cn.ljj.server.ProxyUplodServer</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>ProxyUplodServer</servlet-name>
+    <url-pattern>/proxy/*</url-pattern>
   </servlet-mapping>
 </web-app>
