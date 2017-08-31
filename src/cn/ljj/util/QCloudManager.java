@@ -38,6 +38,7 @@ public class QCloudManager {
 		Logger.d(TAG, "uploadFileRet=" + uploadFileRet);
 		JsonObject retJson = new JsonParser().parse(uploadFileRet).getAsJsonObject();
 		if (retJson == null) {
+            Logger.e(TAG, "upload retJson=null");
 			return null;
 		}
 		int code = retJson.get("code").getAsInt();
@@ -61,12 +62,19 @@ public class QCloudManager {
 		return null;
 	}
 
+	/**
+	 * 
+	 * @param remoteFilePath bucketName/remoteFileName
+	 * @param localFilePath
+	 * @return
+	 */
 	public String upload(String remoteFilePath, String localFilePath) {
 		if (remoteFilePath.startsWith("/")) {
 			remoteFilePath = remoteFilePath.substring(1);
 		}
 		int index = remoteFilePath.indexOf("/");
 		if (index == -1) {
+            Logger.e(TAG, "upload remoteFilePath=" + remoteFilePath);
 			return null;
 		}
 		String bucketName = remoteFilePath.substring(0, index);
@@ -80,6 +88,7 @@ public class QCloudManager {
 		Logger.d(TAG, "statFileRet=" + statFileRet);
 		JsonObject retJson = new JsonParser().parse(statFileRet).getAsJsonObject();
 		if (retJson == null) {
+            Logger.e(TAG, "getUrlIfFileExits retJson=null");
 			return null;
 		}
 		int code = retJson.get("code").getAsInt();

@@ -1,24 +1,31 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://java.sun.com/xml/ns/javaee" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd" id="WebApp_ID" version="3.0">
-  <display-name>UploadServer</display-name>
-  <servlet>
-    <description>UploadServer</description>
-    <display-name>UploadServer</display-name>
-    <servlet-name>UploadServer</servlet-name>
-    <servlet-class>cn.ljj.server.UploadServer</servlet-class>
-  </servlet>
-  <servlet-mapping>
-    <servlet-name>UploadServer</servlet-name>
-    <url-pattern>/normal/*</url-pattern>
-  </servlet-mapping>
-  <servlet>
-    <description>ProxyUplodServer</description>
-    <display-name>ProxyUplodServer</display-name>
-    <servlet-name>ProxyUplodServer</servlet-name>
-    <servlet-class>cn.ljj.server.ProxyUplodServer</servlet-class>
-  </servlet>
-  <servlet-mapping>
-    <servlet-name>ProxyUplodServer</servlet-name>
-    <url-pattern>/proxy/*</url-pattern>
-  </servlet-mapping>
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns="http://java.sun.com/xml/ns/javaee"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
+	id="WebApp_ID" version="3.0">
+	<display-name>UploadServer</display-name>
+	<context-param>
+		<param-name>log4j-init-file</param-name>
+		<param-value>/WEB-INF/classes/log4j.properties</param-value>
+	</context-param>
+	<servlet>
+		<description>UploadServer</description>
+		<display-name>UploadServer</display-name>
+		<servlet-name>UploadServer</servlet-name>
+		<servlet-class>cn.ljj.server.UploadServer</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>UploadServer</servlet-name>
+		<url-pattern>/normal/*</url-pattern>
+	</servlet-mapping>
+	<servlet>
+		<description>ProxyUplodServer</description>
+		<display-name>ProxyUplodServer</display-name>
+		<servlet-name>ProxyUplodServer</servlet-name>
+		<servlet-class>cn.ljj.server.ProxyUplodServer</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>ProxyUplodServer</servlet-name>
+		<url-pattern>/proxy/*</url-pattern>
+	</servlet-mapping>
 </web-app>
